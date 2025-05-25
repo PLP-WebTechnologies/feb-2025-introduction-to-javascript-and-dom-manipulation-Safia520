@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form validation</title>
+     <style>
+    .error {
+      color: red;
+      font-size: 0.9em;
+    }
+    form {
+      margin-bottom: 30px;
+      max-width: 400px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input, select {
+      width: 100%;
+      padding: 6px;
+      margin-top: 4px;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+   <h2>Registration Form</h2>
+  <form id="registrationForm" novalidate>
+    <label>
+      Name*:
+      <input type="text" id="name" required />
+      <span class="error" id="nameError"></span>
+    </label>
+
+    <label>
+      Email*:
+      <input type="email" id="email" required />
+      <span class="error" id="emailError"></span>
+    </label>
+
+    <label>
+      Password*:
+      <input type="password" id="password" required />
+      <span class="error" id="passwordError"></span>
+    </label>
+
+    <label>
+      Confirm Password*:
+      <input type="password" id="confirmPassword" required />
+      <span class="error" id="confirmPasswordError"></span>
+    </label>
+
+    <label>
+      Age*:
+      <input type="number" id="age" required />
+      <span class="error" id="ageError"></span>
+    </label>
+
+    <label>
+      Gender*:
+      <input type="radio" name="gender" value="Male" /> Male
+      <input type="radio" name="gender" value="Female" /> Female
+      <input type="radio" name="gender" value="Other" /> Other
+      <br><br>
+      <span class="error" id="genderError"></span>
+    </label>
+
+    <label>
+      Country*:
+      <select id="country" required>
+        <option value="">--Select Country--</option>
+        <option value="Kenya">Kenya</option>
+        <option value="Uganda">Uganda</option>
+        <option value="Tanzania">Tanzania</option>
+        <option value="Other">Other</option>
+      </select>
+      <span class="error" id="countryError"></span>
+    </label>
+
+    <label>
+      <input type="checkbox" id="terms">
+      I agree to the Terms and Conditions*
+      <span class="error" id="termsError"></span>
+    </label><br><br>
+
+    <button type="submit">Register</button>
+  </form>
+
+  <h2>Login Form</h2>
+  <form id="loginForm" novalidate>
+    <label>
+      Email*:
+      <input type="email" id="loginEmail" required />
+      <span class="error" id="loginEmailError"></span>
+    </label>
+
+    <label>
+      Password*:
+      <input type="password" id="loginPassword" required />
+      <span class="error" id="loginPasswordError"></span>
+    </label>
+
+    <button type="submit">Login</button>
+  </form>
+
+  <script>
+    // Registration Form Validation
+    document.getElementById('registrationForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      // Clear previous errors
+      const errorIds = ['nameError', 'emailError', 'passwordError', 'confirmPasswordError', 'ageError', 'genderError', 'countryError', 'termsError'];
+      errorIds.forEach(id => document.getElementById(id).textContent = '');
+
+      let isValid = true;
+
+      // Name validation
+      const name = document.getElementById('name').value.trim();
+      if (!name) {
+        document.getElementById('nameError').textContent = 'Name is required.';
+        isValid = false;
+      }
+
+      // Email validation (HTML5 email input handles basic validation, but we add a regex check)
+      const email = document.getElementById('email').value.trim();
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!email) {
+        document.getElementById('emailError').textContent = 'Email is required.';
+        isValid = false;
+      } else if (!emailPattern.test(email)) {
+        document.getElementById('emailError').textContent = 'Enter a valid email address.';
+        isValid = false;
+      }
+
+      // Password validation
+      const password = document.getElementById('password').value;
+      if (!password) {
+        document.getElementById('passwordError').textContent = 'Password is required.';
+        isValid = false;
+      } else if (password.length < 8) {
+        document.getElementById('passwordError').textContent = 'Password must be at least 8 characters.';
+        isValid = false;
+      }
+
+      // Confirm Password validation
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      if (!confirmPassword) {
+        document.getElementById('confirmPasswordError').textContent = 'Please confirm your password.';
+        isValid = false;
+      } else if (password !== confirmPassword) {
+        document.getElementById('confirmPasswordError').textContent = 'Passwords do not match.';
+        isValid = false;
+      }
+
+      // Age validation
+      const age = Number(document.getElementById('age').value);
+      if (!age) {
+        document.getElementById('ageError').textContent = 'Age is required.';
+        isValid = false;
+      } else if (age < 18 || age > 100) {
+        document.getElementById('ageError').textContent = 'Age must be between 18 and 100.';
+        isValid = false;
+      }
+
+      // Gender validation
+      const genders = document.getElementsByName('gender');
+      let genderChecked = false;
+      for (const g of genders) {
+        if (g.checked) {
+          genderChecked = true;
+          break;
+        }
+      }
+      if (!genderChecked) {
+        document.getElementById('genderError').textContent = 'Please select your gender.';
+        isValid = false;
+      }
+
+      // Country validation
+      const country = document.getElementById('country').value;
+      if (!country) {
+        document.getElementById('countryError').textContent = 'Please select your country.';
+        isValid = false;
+      }
+
+      // Terms and Conditions validation
+      const termsChecked = document.getElementById('terms').checked;
+      if (!termsChecked) {
+        document.getElementById('termsError').textContent = 'You must agree to the terms.';
+        isValid = false;
+      }
+
+      if (isValid) {
+        alert('Registration successful!');
+        this.reset();
+      }
+    });
+
+    // Login Form Validation
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      // Clear previous errors
+      document.getElementById('loginEmailError').textContent = '';
+      document.getElementById('loginPasswordError').textContent = '';
+
+      let isValid = true;
+
+      // Email validation
+      const email = document.getElementById('loginEmail').value.trim();
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!email) {
+        document.getElementById('loginEmailError').textContent = 'Email is required.';
+        isValid = false;
+      } else if (!emailPattern.test(email)) {
+        document.getElementById('loginEmailError').textContent = 'Enter a valid email address.';
+        isValid = false;
+      }
+
+      // Password validation
+      const password = document.getElementById('loginPassword').value;
+      if (!password) {
+        document.getElementById('loginPasswordError').textContent = 'Password is required.';
+        isValid = false;
+      }
+
+      if (isValid) {
+        alert('Login successful!');
+        this.reset();
+      }
+    });
+  </script>
+</body>
+</html>
